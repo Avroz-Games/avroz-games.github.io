@@ -145,7 +145,10 @@ export default function Header() {
                 </button>
               </>
             ) : (
-              <Link to="/entrar" className="hidden sm:flex btn-secondary py-2 px-4 text-sm">Entrar</Link>
+              <>
+                <Link to="/entrar" className="hidden sm:flex btn-secondary py-2 px-4 text-sm">Entrar</Link>
+                <Link to="/cadastro" className="hidden sm:flex btn-primary py-2 px-4 text-sm">Cadastrar</Link>
+              </>
             )}
 
           </nav>
@@ -254,6 +257,19 @@ export default function Header() {
 
               ))}
 
+              {!isAuthenticated && (
+                <>
+                  <Link to="/entrar" onClick={() => setMobileOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-gray-400">
+                    Entrar
+                  </Link>
+                  <Link to="/cadastro" onClick={() => setMobileOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-neon-cyan bg-brand-500/10">
+                    Criar conta
+                  </Link>
+                  <Link to="/cadastro?tipo=vendedor" onClick={() => setMobileOpen(false)} className="rounded-lg px-4 py-3 text-sm font-medium text-gray-400">
+                    Quero vender
+                  </Link>
+                </>
+              )}
             </nav>
 
           </div>

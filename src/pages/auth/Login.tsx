@@ -1,4 +1,4 @@
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import { useState } from 'react'
 import { Shield, Store, User, Loader2 } from 'lucide-react'
 import { useAuth } from '../../context/AuthContext'
@@ -6,6 +6,8 @@ import { useAuth } from '../../context/AuthContext'
 export default function Login() {
   const { signIn } = useAuth()
   const navigate = useNavigate()
+  const [params] = useSearchParams()
+  const redirect = params.get('redirect') || '/'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -17,7 +19,7 @@ export default function Login() {
     setLoading(true)
     try {
       await signIn(email, password)
-      navigate('/')
+      navigate(redirect.startsWith('/') ? redirect : '/')
     } catch {
       setError('E-mail ou senha incorretos')
     }
@@ -26,7 +28,11 @@ export default function Login() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <h1 className="font-display text-2xl font-bold text-white text-center mb-8">Entrar</h1>
+      <h1 className="font-display text-2xl font-bold text-white text-center mb-2">Entrar</h1>
+      {params.get('redirect') && (
+        <p className="text-center text-sm text-gray-400 mb-6">Faça login para continuar sua compra</p>
+      )}
+      {!params.get('redirect') && <div className="mb-8" />}
       <form onSubmit={handleSubmit} className="card p-6 space-y-4">
         {error && <div className="rounded-xl bg-red-500/10 border border-red-500/30 px-4 py-3 text-sm text-red-400">{error}</div>}
         <div>

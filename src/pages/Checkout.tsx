@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { Truck, CreditCard, Check, Loader2, Shield, Store } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useMarketplace } from '../context/MarketplaceContext'
@@ -8,6 +8,7 @@ import { fetchAddressByCep, formatCep, formatCpf, formatPhone } from '../service
 import { calculateShipping, generatePixCode } from '../services/shipping'
 import { createMarketplaceOrder } from '../services/marketplace'
 import type { ShippingOption, Order, SubOrder, OrderItem, Address } from '../types'
+import GuestCheckoutGate from '../components/auth/GuestCheckoutGate'
 import { calcPixPrice, calcSellerPayout, calcPlatformFee, formatCurrency, generateId } from '../types'
 
 interface CustomerForm {
@@ -77,8 +78,16 @@ export default function Checkout() {
     if (items.length === 0 && !orderComplete) navigate('/carrinho')
   }, [items, navigate, orderComplete])
 
-  if (!authLoading && !isAuthenticated) {
-    return <Navigate to="/entrar?redirect=/checkout" replace />
+  if (authLoading) {
+    return (
+      <div className="flex min-h-[40vh] items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-neon-cyan" />
+      </div>
+    )
+  }
+
+  if (!isAuthenticated) {
+    return <GuestCheckoutGate redirectPath="/checkout" />
   }
 
   const handleCepChange = async (cep: string) => {

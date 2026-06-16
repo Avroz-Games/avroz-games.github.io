@@ -1,12 +1,14 @@
 import { Link } from 'react-router-dom'
-import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
+import { Minus, Plus, Trash2, ShoppingBag, ArrowRight, Eye } from 'lucide-react'
 import { useCart } from '../context/CartContext'
 import { useProducts } from '../context/MarketplaceContext'
+import { useAuth } from '../context/AuthContext'
 import { formatCurrency, calcPixPrice } from '../types'
 
 export default function Cart() {
   const { items, updateQuantity, removeFromCart, subtotal, totalItems } = useCart()
   const { settings } = useProducts()
+  const { isAuthenticated } = useAuth()
 
   const pixSubtotal = items.reduce(
     (sum, i) => sum + calcPixPrice(i.product.salePrice, settings.pixDiscountPercent) * i.quantity,
@@ -29,9 +31,16 @@ export default function Cart() {
 
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-        <h1 className="font-display text-3xl font-bold text-white mb-8">
+        <h1 className="font-display text-3xl font-bold text-white mb-2">
         Carrinho ({totalItems} {totalItems === 1 ? 'item' : 'itens'})
       </h1>
+      {!isAuthenticated && (
+        <p className="flex items-center gap-2 text-sm text-gray-400 mb-8">
+          <Eye className="h-4 w-4 text-neon-cyan" />
+          Você está comprando como visitante — login ou cadastro só ao finalizar.
+        </p>
+      )}
+      {isAuthenticated && <div className="mb-8" />}
 
       <div className="grid gap-8 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-4">

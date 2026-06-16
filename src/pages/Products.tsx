@@ -1,12 +1,14 @@
 import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Filter, X } from 'lucide-react'
+import { Filter, X, Eye } from 'lucide-react'
 import ProductCard from '../components/product/ProductCard'
 import { useProducts } from '../context/MarketplaceContext'
+import { useAuth } from '../context/AuthContext'
 import { CATEGORIES } from '../types'
 
 export default function Products() {
   const { products } = useProducts()
+  const { isAuthenticated } = useAuth()
   const [searchParams] = useSearchParams()
   const [selectedCategory, setSelectedCategory] = useState(searchParams.get('categoria') || '')
   const [sortBy, setSortBy] = useState('featured')
@@ -52,6 +54,12 @@ export default function Products() {
     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="mb-8">
         <h1 className="font-display text-3xl font-bold text-white">Produtos</h1>
+        {!isAuthenticated && (
+          <p className="mt-2 flex items-center gap-2 text-sm text-gray-400">
+            <Eye className="h-4 w-4 text-neon-cyan" />
+            Catálogo aberto para visitantes — cadastro gratuito só na compra.
+          </p>
+        )}
         {searchQuery && (
           <p className="mt-2 text-gray-500">
             Resultados para &quot;{searchQuery}&quot; — {filtered.length} produto(s)

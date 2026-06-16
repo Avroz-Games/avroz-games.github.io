@@ -1,10 +1,12 @@
 import { Link } from 'react-router-dom'
 
-import { ArrowRight, Truck, CreditCard, Shield, Star } from 'lucide-react'
+import { ArrowRight, Truck, CreditCard, Shield, Star, LogIn, UserPlus } from 'lucide-react'
 
 import ProductCard from '../components/product/ProductCard'
+import GuestVisitorSection from '../components/home/GuestVisitorSection'
 
 import { useProducts } from '../context/MarketplaceContext'
+import { useAuth } from '../context/AuthContext'
 
 import { CATEGORIES } from '../types'
 
@@ -13,6 +15,7 @@ import { CATEGORIES } from '../types'
 export default function Home() {
 
   const { products, settings, loading } = useProducts()
+  const { isAuthenticated } = useAuth()
 
   const featured = products.filter((p) => p.active && p.featured).slice(0, 4)
 
@@ -69,22 +72,31 @@ export default function Home() {
             </p>
 
             <div className="mt-8 flex flex-wrap gap-4">
-
               <Link to="/produtos" className="btn-primary animate-pulse-glow">
-
-                Ver Produtos
-
+                {isAuthenticated ? 'Ver Produtos' : 'Explorar sem cadastro'}
                 <ArrowRight className="h-4 w-4" />
-
               </Link>
-
-              <Link to="/produtos?categoria=Promoções" className="btn-secondary">
-
-                Promoções
-
-              </Link>
-
+              {!isAuthenticated && (
+                <>
+                  <Link to="/cadastro" className="btn-secondary">
+                    <UserPlus className="h-4 w-4" /> Criar conta grátis
+                  </Link>
+                  <Link to="/entrar" className="inline-flex items-center gap-1 px-4 py-2 text-sm text-gray-400 hover:text-neon-cyan">
+                    <LogIn className="h-4 w-4" /> Já tenho conta
+                  </Link>
+                </>
+              )}
+              {isAuthenticated && (
+                <Link to="/produtos?categoria=Promoções" className="btn-secondary">
+                  Promoções
+                </Link>
+              )}
             </div>
+            {!isAuthenticated && (
+              <p className="mt-4 text-sm text-gray-500">
+                Navegue, compare preços e monte seu carrinho — cadastro só na hora de comprar.
+              </p>
+            )}
 
           </div>
 
@@ -281,6 +293,8 @@ export default function Home() {
       </section>
 
 
+
+      {!isAuthenticated && <GuestVisitorSection />}
 
       {/* CTA */}
 

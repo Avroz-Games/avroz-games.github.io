@@ -7,6 +7,7 @@ export default function Register() {
   const { signUp } = useAuth()
   const navigate = useNavigate()
   const [params] = useSearchParams()
+  const redirect = params.get('redirect') || ''
   const [role, setRole] = useState<'customer' | 'seller'>(params.get('tipo') === 'vendedor' ? 'seller' : 'customer')
   const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
@@ -21,7 +22,13 @@ export default function Register() {
     setLoading(true)
     try {
       await signUp(email, password, fullName, role)
-      navigate(role === 'seller' ? '/vendedor/cadastro' : '/')
+      if (role === 'seller') {
+        navigate('/vendedor/cadastro')
+      } else if (redirect.startsWith('/')) {
+        navigate(redirect)
+      } else {
+        navigate('/')
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao cadastrar')
     }
@@ -31,7 +38,9 @@ export default function Register() {
   return (
     <div className="mx-auto max-w-md px-4 py-16">
       <h1 className="font-display text-2xl font-bold text-white text-center mb-2">Criar conta</h1>
-      <p className="text-center text-gray-400 text-sm mb-8">Compre ou venda no marketplace</p>
+      <p className="text-center text-gray-400 text-sm mb-8">
+        {redirect ? 'Cadastro rápido para finalizar sua compra' : 'Compre ou venda no marketplace'}
+      </p>
 
       <div className="flex gap-2 mb-6">
         {(['customer', 'seller'] as const).map((r) => (
