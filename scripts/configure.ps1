@@ -45,9 +45,7 @@ Write-Host "  3. Execute supabase/seed.sql"
 Write-Host ""
 Write-Host "Crie um usuario admin em Authentication > Users" -ForegroundColor Cyan
 Write-Host ""
-Write-Host "Para GitHub Pages, adicione os secrets no repositorio:" -ForegroundColor Cyan
-Write-Host "  Settings > Secrets > Actions"
-Write-Host "  - VITE_SUPABASE_URL"
-Write-Host "  - VITE_SUPABASE_ANON_KEY"
+Write-Host "Repositorio: https://github.com/Avroz-Games/avroz-games.github.io" -ForegroundColor Cyan
+Write-Host "Site: https://avroz-games.github.io/" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Reinicie o servidor: npm run dev" -ForegroundColor Green
