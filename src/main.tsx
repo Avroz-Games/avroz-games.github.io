@@ -5,21 +5,18 @@ import App from './App'
 import { MarketplaceProvider } from './context/MarketplaceContext'
 import { CartProvider } from './context/CartContext'
 import { AuthProvider } from './context/AuthContext'
-import ProductionGuard from './components/layout/ProductionGuard'
 import './index.css'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter basename={import.meta.env.BASE_URL.replace(/\/$/, '') || undefined}>
-      <ProductionGuard>
-        <AuthProvider>
-          <MarketplaceProvider>
-            <CartProvider>
-              <App />
-            </CartProvider>
-          </MarketplaceProvider>
-        </AuthProvider>
-      </ProductionGuard>
+      <AuthProvider>
+        <MarketplaceProvider>
+          <CartProvider>
+            <App />
+          </CartProvider>
+        </MarketplaceProvider>
+      </AuthProvider>
     </BrowserRouter>
   </StrictMode>
 )

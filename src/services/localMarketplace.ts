@@ -31,8 +31,21 @@ function save(key: string, data: unknown) {
   localStorage.setItem(key, JSON.stringify(data))
 }
 
+function needsDemoInit(): boolean {
+  const raw = localStorage.getItem(KEYS.products)
+  if (!raw) return true
+  try {
+    const products = JSON.parse(raw) as Product[]
+    if (!Array.isArray(products) || products.length === 0) return true
+    // Migra dados da versão single-store (sem sellerId)
+    return !products[0]?.sellerId
+  } catch {
+    return true
+  }
+}
+
 function initDemo() {
-  if (localStorage.getItem(KEYS.products)) return
+  if (!needsDemoInit()) return
 
   const adminId = 'admin-user'
   const seller1Id = 'seller-1'

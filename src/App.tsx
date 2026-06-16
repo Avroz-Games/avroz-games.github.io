@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Header from './components/layout/Header'
+import DemoModeBanner from './components/layout/DemoModeBanner'
 import Footer from './components/layout/Footer'
 import Home from './pages/Home'
 import Products from './pages/Products'
@@ -36,6 +37,7 @@ export default function App() {
           path="/*"
           element={
             <>
+              <DemoModeBanner />
               <Header />
               <main className="flex-1">
                 <Routes>
