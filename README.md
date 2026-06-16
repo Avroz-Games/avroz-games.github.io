@@ -52,7 +52,7 @@ npm run preview
 3. Em **Settings → Pages**, selecione **GitHub Actions** como source
 4. O workflow `.github/workflows/deploy.yml` fará o deploy automaticamente
 
-> **Importante:** Se o nome do repositório for diferente de `avroz-games-store`, o deploy já usa o nome correto via variável de ambiente. Para deploy manual, ajuste o `base` no `vite.config.ts`.
+> **Importante:** O site será publicado em `https://avroz-games.github.io/site/` após ativar GitHub Pages com source **GitHub Actions**.
 
 ## Estrutura
 
