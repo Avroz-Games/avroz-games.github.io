@@ -2,7 +2,7 @@ import { useState, useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Filter, X } from 'lucide-react'
 import ProductCard from '../components/product/ProductCard'
-import { useProducts } from '../context/ProductContext'
+import { useProducts } from '../context/MarketplaceContext'
 import { CATEGORIES } from '../types'
 
 export default function Products() {

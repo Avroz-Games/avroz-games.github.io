@@ -1,15 +1,15 @@
 import { Link } from 'react-router-dom'
 import { Minus, Plus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { useProducts } from '../context/ProductContext'
-import { formatCurrency, calculatePixPrice } from '../services/storage'
+import { useProducts } from '../context/MarketplaceContext'
+import { formatCurrency, calcPixPrice } from '../types'
 
 export default function Cart() {
   const { items, updateQuantity, removeFromCart, subtotal, totalItems } = useCart()
   const { settings } = useProducts()
 
   const pixSubtotal = items.reduce(
-    (sum, i) => sum + calculatePixPrice(i.product.salePrice, settings.pixDiscountPercent) * i.quantity,
+    (sum, i) => sum + calcPixPrice(i.product.salePrice, settings.pixDiscountPercent) * i.quantity,
     0
   )
   const pixDiscount = subtotal - pixSubtotal

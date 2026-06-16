@@ -1,63 +1,83 @@
-# Avroz Games — Marketplace
+# Avroz Games — Marketplace Multi-Vendedor
 
-Marketplace profissional de jogos, consoles e acessórios com painel administrativo, pagamento PIX com desconto e cálculo de frete via Correios.
+Marketplace estilo Mercado Livre para produtos gamer: vendedores independentes, **comissão 25%**, pagamento em **escrow** e painéis para comprador, vendedor e admin.
 
-**Repositório:** https://github.com/Avroz-Games/avroz-games.github.io  
-**Site:** https://avroz-games.github.io/
+**Site:** https://avroz-games.github.io/  
+**Repositório:** https://github.com/Avroz-Games/avroz-games.github.io
+
+---
 
 ## Funcionalidades
 
-### Loja (Cliente)
-- Catálogo responsivo com busca, filtros e 20 categorias
-- Simulador de frete Correios na página do produto
-- Checkout em 3 etapas com PIX (10% OFF) e QR Code
-- Tema dark gaming com identidade Avroz Games
+### Comprador
+- Cadastro/login, catálogo multi-vendedor, carrinho e checkout seguro
+- PIX com desconto, frete Correios por vendedor
+- Confirmação de recebimento libera repasse ao vendedor (escrow)
 
-### Painel Admin (`/admin`)
-- CRUD de produtos com upload de fotos
-- Margem automática de 45% sobre custo
-- Gestão de pedidos e configurações da loja
-- Status de conexão Supabase em tempo real
+### Vendedor
+- Cadastro de loja (aprovação admin), CRUD de produtos
+- Painel de pedidos, rastreio e repasses
 
----
+### Admin
+- Dashboard, moderação de produtos, aprovação de vendedores
+- Gestão de pedidos/escrow e configurações da plataforma
 
-## GitHub Pages
-
-O site é publicado automaticamente a cada push na `main` via GitHub Actions.
-
-1. O workflow faz build e publica na branch `gh-pages`
-2. URL: **https://avroz-games.github.io/**
-3. Secrets opcionais (Settings → Secrets → Actions):
-   - `VITE_SUPABASE_URL`
-   - `VITE_SUPABASE_ANON_KEY`
+### Jurídico
+- Termos, privacidade (LGPD), contratos comprador e vendedor em `/legal/*`
 
 ---
 
-## Supabase (backend na nuvem)
+## Produção (deploy)
 
-1. Crie um projeto em [supabase.com](https://supabase.com)
-2. Execute no SQL Editor: `schema.sql` → `storage.sql` → `seed.sql`
-3. Crie usuário admin em **Authentication → Users**
-4. Copie `.env.example` → `.env` e preencha as chaves
-5. Ou execute: `.\scripts\configure.ps1`
+1. **Supabase:** execute `supabase/schema.sql` → `storage.sql` → `seed.sql`
+2. **Secrets GitHub:** `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`
+3. **Deploy:** push na `main` → GitHub Actions publica em `gh-pages`
+
+Guia completo: **[docs/DEPLOY.md](docs/DEPLOY.md)**
+
+Setup automatizado:
+```powershell
+.\scripts\setup-production.ps1
+```
+
+Documentação:
+- [docs/APPLICATION.md](docs/APPLICATION.md) — funcionalidades e arquitetura
+- [docs/SECURITY.md](docs/SECURITY.md) — segurança e LGPD
 
 ---
 
-## Instalação local
+## Desenvolvimento local
 
 ```bash
 npm install
+copy .env.example .env   # preencha Supabase
 npm run dev
 ```
 
-Acesse: http://localhost:5173
+Sem `.env`, o app roda em **modo demo** (localStorage) — apenas para desenvolvimento.
 
-## Credenciais demo (modo local)
+### Contas demo (modo local)
 
-| Campo   | Valor        |
-|---------|--------------|
-| Usuário | `admin`      |
-| Senha   | `avroz2024`  |
+| Papel | E-mail | Senha |
+|-------|--------|-------|
+| Admin | admin@avrozgames.com.br | avroz2024 |
+| Comprador | cliente@demo.com | demo1234 |
+| Vendedor | vendedor1@demo.com | demo1234 |
+
+---
+
+## Rotas principais
+
+| Rota | Descrição |
+|------|-----------|
+| `/` | Loja |
+| `/entrar`, `/cadastro` | Auth |
+| `/minha-conta` | Pedidos do comprador |
+| `/vendedor` | Painel vendedor |
+| `/admin` | Painel admin |
+| `/legal/termos` | Termos de uso |
+
+---
 
 ## Licença
 

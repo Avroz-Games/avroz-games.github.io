@@ -1,74 +1,94 @@
-import { useState, useEffect } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { Truck, CreditCard, Copy, Check, Loader2, MapPin } from 'lucide-react'
+import { useState, useEffect, useMemo } from 'react'
+import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { Truck, CreditCard, Check, Loader2, Shield, Store } from 'lucide-react'
 import { useCart } from '../context/CartContext'
-import { useProducts } from '../context/ProductContext'
-import { formatCurrency, calculatePixPrice, generateId } from '../services/storage'
-import { createOrder } from '../services/api'
+import { useMarketplace } from '../context/MarketplaceContext'
+import { useAuth } from '../context/AuthContext'
 import { fetchAddressByCep, formatCep, formatCpf, formatPhone } from '../services/viacep'
 import { calculateShipping, generatePixCode } from '../services/shipping'
-import type { ShippingOption, CustomerInfo, Order } from '../types'
+import { createMarketplaceOrder } from '../services/marketplace'
+import type { ShippingOption, Order, SubOrder, OrderItem, Address } from '../types'
+import { calcPixPrice, calcSellerPayout, calcPlatformFee, formatCurrency, generateId } from '../types'
+
+interface CustomerForm {
+  name: string
+  email: string
+  phone: string
+  cpf: string
+  address: Address
+}
 
 export default function Checkout() {
   const { items, subtotal, clearCart } = useCart()
-  const { settings } = useProducts()
+  const { settings } = useMarketplace()
+  const { profile, isAuthenticated, loading: authLoading } = useAuth()
   const navigate = useNavigate()
 
   const [step, setStep] = useState(1)
   const [loadingCep, setLoadingCep] = useState(false)
   const [loadingShipping, setLoadingShipping] = useState(false)
-  const [shippingOptions, setShippingOptions] = useState<ShippingOption[]>([])
-  const [selectedShipping, setSelectedShipping] = useState<ShippingOption | null>(null)
+  const [shippingBySeller, setShippingBySeller] = useState<Record<string, { options: ShippingOption[]; selected: ShippingOption | null }>>({})
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'card'>('pix')
   const [orderComplete, setOrderComplete] = useState(false)
   const [pixCode, setPixCode] = useState('')
   const [copied, setCopied] = useState(false)
   const [orderId, setOrderId] = useState('')
+  const [termsAccepted, setTermsAccepted] = useState(false)
+  const [total, setTotal] = useState(0)
 
-  const [customer, setCustomer] = useState<CustomerInfo>({
-    name: '',
-    email: '',
-    phone: '',
-    cpf: '',
-    address: {
-      cep: '',
-      street: '',
-      number: '',
-      complement: '',
-      neighborhood: '',
-      city: '',
-      state: '',
-    },
+  const [customer, setCustomer] = useState<CustomerForm>({
+    name: profile?.fullName || '',
+    email: profile?.email || '',
+    phone: profile?.phone || '',
+    cpf: profile?.cpf || '',
+    address: { cep: '', street: '', number: '', complement: '', neighborhood: '', city: '', state: '' },
   })
 
+  useEffect(() => {
+    if (profile) {
+      setCustomer((c) => ({
+        ...c,
+        name: profile.fullName || c.name,
+        email: profile.email || c.email,
+      }))
+    }
+  }, [profile])
+
+  const sellerGroups = useMemo(() => {
+    const map = new Map<string, typeof items>()
+    items.forEach((item) => {
+      const sid = item.product.sellerId
+      if (!map.has(sid)) map.set(sid, [])
+      map.get(sid)!.push(item)
+    })
+    return map
+  }, [items])
+
   const pixSubtotal = items.reduce(
-    (sum, i) => sum + calculatePixPrice(i.product.salePrice, settings.pixDiscountPercent) * i.quantity,
+    (sum, i) => sum + calcPixPrice(i.product.salePrice, settings.pixDiscountPercent) * i.quantity,
     0
   )
   const discount = paymentMethod === 'pix' ? subtotal - pixSubtotal : 0
   const finalSubtotal = paymentMethod === 'pix' ? pixSubtotal : subtotal
-  const shippingCost = selectedShipping?.price || 0
-  const total = finalSubtotal + shippingCost
+  const shippingCost = Object.values(shippingBySeller).reduce((s, v) => s + (v.selected?.price || 0), 0)
+  const orderTotal = finalSubtotal + shippingCost
 
   useEffect(() => {
-    if (items.length === 0 && !orderComplete) {
-      navigate('/carrinho')
-    }
+    if (items.length === 0 && !orderComplete) navigate('/carrinho')
   }, [items, navigate, orderComplete])
+
+  if (!authLoading && !isAuthenticated) {
+    return <Navigate to="/entrar?redirect=/checkout" replace />
+  }
 
   const handleCepChange = async (cep: string) => {
     const formatted = formatCep(cep)
-    setCustomer((prev) => ({
-      ...prev,
-      address: { ...prev.address, cep: formatted },
-    }))
-
+    setCustomer((prev) => ({ ...prev, address: { ...prev.address, cep: formatted } }))
     const clean = cep.replace(/\D/g, '')
     if (clean.length === 8) {
       setLoadingCep(true)
       const address = await fetchAddressByCep(clean)
       setLoadingCep(false)
-
       if (address) {
         setCustomer((prev) => ({
           ...prev,
@@ -88,47 +108,86 @@ export default function Checkout() {
   const handleCalculateShipping = async () => {
     const cleanCep = customer.address.cep.replace(/\D/g, '')
     if (cleanCep.length !== 8) return
-
     setLoadingShipping(true)
-    const packages = items.map((i) => ({
-      weight: i.product.weight * i.quantity,
-      length: i.product.length,
-      height: i.product.height,
-      width: i.product.width,
-    }))
+    const result: typeof shippingBySeller = {}
 
-    const options = await calculateShipping(settings.originCep, cleanCep, packages)
-    setShippingOptions(options)
-    setSelectedShipping(options[0] || null)
+    for (const [sellerId, groupItems] of sellerGroups) {
+      const packages = groupItems.map((i) => ({
+        weight: i.product.weight * i.quantity,
+        length: i.product.length,
+        height: i.product.height,
+        width: i.product.width,
+      }))
+      const options = await calculateShipping(settings.originCep, cleanCep, packages)
+      result[sellerId] = { options, selected: options[0] || null }
+    }
+    setShippingBySeller(result)
     setLoadingShipping(false)
   }
 
+  const buildSubOrders = (): SubOrder[] => {
+    const subs: SubOrder[] = []
+    for (const [sellerId, groupItems] of sellerGroups) {
+      const orderItems: OrderItem[] = groupItems.map((i) => ({
+        id: generateId(),
+        productId: i.product.id,
+        productName: i.product.name,
+        quantity: i.quantity,
+        unitSalePrice: i.product.salePrice,
+        unitSellerPayout: calcSellerPayout(i.product.salePrice, settings.platformFeePercent),
+        unitPlatformFee: calcPlatformFee(i.product.salePrice, settings.platformFeePercent),
+      }))
+      const subSubtotal = groupItems.reduce((s, i) => s + i.product.salePrice * i.quantity, 0)
+      const ship = shippingBySeller[sellerId]?.selected
+      const shipCost = ship?.price || 0
+      subs.push({
+        id: generateId(),
+        orderId: '',
+        sellerId,
+        sellerName: groupItems[0].product.sellerName,
+        subtotal: subSubtotal,
+        sellerPayout: orderItems.reduce((s, i) => s + i.unitSellerPayout * i.quantity, 0),
+        platformFee: orderItems.reduce((s, i) => s + i.unitPlatformFee * i.quantity, 0),
+        shippingCost: shipCost,
+        shipping: ship || undefined,
+        status: 'paid',
+        escrowStatus: 'held',
+        items: orderItems,
+        createdAt: new Date().toISOString(),
+      })
+    }
+    return subs
+  }
+
   const handleSubmitOrder = async () => {
+    if (!termsAccepted || !profile) return
     const id = generateId()
     const txId = id.slice(0, 25)
     const code =
       paymentMethod === 'pix'
-        ? generatePixCode(settings.pixKey, total, settings.storeName, customer.address.city, txId)
+        ? generatePixCode(settings.platformPixKey, orderTotal, settings.platformName, customer.address.city, txId)
         : undefined
 
+    const subOrders = buildSubOrders()
     const order: Order = {
       id,
-      items,
-      customer,
-      shipping: selectedShipping!,
+      buyerId: profile.id,
       subtotal,
       shippingCost,
       discount,
-      total,
+      total: orderTotal,
       paymentMethod,
-      status: 'pending',
+      status: 'paid',
       pixCode: code,
+      shippingAddress: { ...customer.address, name: customer.name, email: customer.email, phone: customer.phone, cpf: customer.cpf },
+      subOrders: subOrders.map((s) => ({ ...s, orderId: id })),
       createdAt: new Date().toISOString(),
     }
 
-    await createOrder(order)
+    await createMarketplaceOrder(order)
     setOrderId(id)
     setPixCode(code || '')
+    setTotal(orderTotal)
     setOrderComplete(true)
     clearCart()
   }
@@ -142,405 +201,156 @@ export default function Checkout() {
   if (orderComplete) {
     return (
       <div className="mx-auto max-w-2xl px-4 py-16 text-center animate-fade-in">
-        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
-          <Check className="h-8 w-8 text-green-600" />
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-green-500/20">
+          <Check className="h-8 w-8 text-green-400" />
         </div>
-        <h1 className="mt-6 text-2xl font-bold text-gray-900">Pedido Realizado!</h1>
-        <p className="mt-2 text-gray-500">Pedido #{orderId.slice(-8).toUpperCase()}</p>
+        <h1 className="mt-6 text-2xl font-bold text-white">Pedido Realizado!</h1>
+        <p className="mt-2 text-gray-400">Pedido #{orderId.slice(-8).toUpperCase()}</p>
+        <div className="card mt-6 p-4 text-left flex items-start gap-3">
+          <Shield className="h-6 w-6 text-neon-cyan shrink-0" />
+          <p className="text-sm text-gray-400">
+            Pagamento em <strong className="text-white">escrow</strong>: o valor ficará retido até você confirmar o recebimento de cada vendedor em Minha Conta.
+          </p>
+        </div>
 
         {paymentMethod === 'pix' && pixCode && (
-          <div className="card mt-8 p-6 text-left">
-            <h2 className="font-semibold text-gray-900 mb-2">Pague com PIX</h2>
-            <p className="text-sm text-gray-500 mb-4">
-              Escaneie o QR Code ou copie o código abaixo. Total: {formatCurrency(total)}
-            </p>
+          <div className="card mt-6 p-6 text-left">
+            <h2 className="font-semibold text-white mb-2">Pague com PIX</h2>
+            <p className="text-sm text-gray-500 mb-4">Total: {formatCurrency(total)}</p>
             <div className="flex justify-center mb-4">
               <img
                 src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(pixCode)}`}
                 alt="QR Code PIX"
-                className="rounded-xl border border-gray-100"
+                className="rounded-xl border border-surface-600"
                 width={200}
                 height={200}
               />
             </div>
             <div className="relative">
-              <textarea
-                readOnly
-                value={pixCode}
-                className="input-field text-xs font-mono h-24 resize-none"
-              />
-              <button
-                onClick={copyPixCode}
-                className="absolute right-2 top-2 btn-primary py-2 px-3 text-xs"
-              >
-                {copied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
+              <textarea readOnly value={pixCode} className="input-field text-xs font-mono h-24 resize-none" />
+              <button onClick={copyPixCode} className="absolute right-2 top-2 btn-primary py-2 px-3 text-xs">
                 {copied ? 'Copiado!' : 'Copiar'}
               </button>
             </div>
-            <p className="mt-4 text-xs text-gray-400">
-              Chave PIX: {settings.pixKey}
-            </p>
           </div>
         )}
 
-        <Link to="/" className="btn-primary mt-8 inline-flex">
-          Voltar à Loja
-        </Link>
+        <Link to="/minha-conta" className="btn-primary mt-8 inline-flex">Acompanhar pedido</Link>
       </div>
     )
   }
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-      <h1 className="font-display text-3xl font-bold text-white mb-8">Checkout</h1>
-
-      {/* Steps */}
-      <div className="flex items-center gap-2 mb-8">
-        {['Dados', 'Frete', 'Pagamento'].map((label, i) => (
-          <div key={label} className="flex items-center gap-2">
-            <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-semibold ${
-                step > i + 1
-                  ? 'bg-green-500 text-white'
-                  : step === i + 1
-                    ? 'bg-brand-600 text-white'
-                    : 'bg-gray-200 text-gray-500'
-              }`}
-            >
-              {step > i + 1 ? <Check className="h-4 w-4" /> : i + 1}
-            </div>
-            <span className={`text-sm hidden sm:block ${step === i + 1 ? 'font-semibold' : 'text-gray-500'}`}>
-              {label}
-            </span>
-            {i < 2 && <div className="h-px w-8 sm:w-16 bg-gray-200" />}
-          </div>
-        ))}
-      </div>
+    <div className="mx-auto max-w-7xl px-4 py-8">
+      <h1 className="font-display text-3xl font-bold text-white mb-2">Checkout Seguro</h1>
+      <p className="text-gray-400 mb-8 flex items-center gap-2"><Shield className="h-4 w-4 text-neon-cyan" /> Pagamento protegido em escrow</p>
 
       <div className="grid gap-8 lg:grid-cols-3">
-        <div className="lg:col-span-2">
-          {/* Step 1: Customer data */}
+        <div className="lg:col-span-2 space-y-6">
           {step === 1 && (
-            <div className="card p-6 animate-fade-in">
-              <h2 className="font-semibold text-gray-900 mb-6">Dados Pessoais</h2>
+            <div className="card p-6">
+              <h2 className="font-semibold text-white mb-6">Dados de entrega</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome completo</label>
-                  <input
-                    type="text"
-                    value={customer.name}
-                    onChange={(e) => setCustomer({ ...customer, name: e.target.value })}
-                    className="input-field"
-                    required
-                  />
+                  <label className="text-sm text-gray-300">Nome</label>
+                  <input value={customer.name} onChange={(e) => setCustomer({ ...customer, name: e.target.value })} className="input-field" required />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">E-mail</label>
-                  <input
-                    type="email"
-                    value={customer.email}
-                    onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
-                    className="input-field"
-                    required
-                  />
+                  <label className="text-sm text-gray-300">Telefone</label>
+                  <input value={customer.phone} onChange={(e) => setCustomer({ ...customer, phone: formatPhone(e.target.value) })} className="input-field" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Telefone</label>
-                  <input
-                    type="tel"
-                    value={customer.phone}
-                    onChange={(e) => setCustomer({ ...customer, phone: formatPhone(e.target.value) })}
-                    className="input-field"
-                    required
-                  />
+                  <label className="text-sm text-gray-300">CPF</label>
+                  <input value={customer.cpf} onChange={(e) => setCustomer({ ...customer, cpf: formatCpf(e.target.value) })} className="input-field" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">CPF</label>
-                  <input
-                    type="text"
-                    value={customer.cpf}
-                    onChange={(e) => setCustomer({ ...customer, cpf: formatCpf(e.target.value) })}
-                    className="input-field"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">CEP</label>
+                  <label className="text-sm text-gray-300">CEP</label>
                   <div className="relative">
-                    <input
-                      type="text"
-                      value={customer.address.cep}
-                      onChange={(e) => handleCepChange(e.target.value)}
-                      className="input-field"
-                      placeholder="00000-000"
-                      required
-                    />
-                    {loadingCep && (
-                      <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-brand-600" />
-                    )}
+                    <input value={customer.address.cep} onChange={(e) => handleCepChange(e.target.value)} className="input-field" required />
+                    {loadingCep && <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-neon-cyan" />}
                   </div>
                 </div>
                 <div className="sm:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Rua</label>
-                  <input
-                    type="text"
-                    value={customer.address.street}
-                    onChange={(e) =>
-                      setCustomer({ ...customer, address: { ...customer.address, street: e.target.value } })
-                    }
-                    className="input-field"
-                    required
-                  />
+                  <input value={customer.address.street} onChange={(e) => setCustomer({ ...customer, address: { ...customer.address, street: e.target.value } })} className="input-field" placeholder="Rua" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Número</label>
-                  <input
-                    type="text"
-                    value={customer.address.number}
-                    onChange={(e) =>
-                      setCustomer({ ...customer, address: { ...customer.address, number: e.target.value } })
-                    }
-                    className="input-field"
-                    required
-                  />
+                  <input value={customer.address.number} onChange={(e) => setCustomer({ ...customer, address: { ...customer.address, number: e.target.value } })} className="input-field" placeholder="Número" />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Complemento</label>
-                  <input
-                    type="text"
-                    value={customer.address.complement}
-                    onChange={(e) =>
-                      setCustomer({ ...customer, address: { ...customer.address, complement: e.target.value } })
-                    }
-                    className="input-field"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Bairro</label>
-                  <input
-                    type="text"
-                    value={customer.address.neighborhood}
-                    onChange={(e) =>
-                      setCustomer({ ...customer, address: { ...customer.address, neighborhood: e.target.value } })
-                    }
-                    className="input-field"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Cidade / UF</label>
-                  <input
-                    type="text"
-                    value={`${customer.address.city}${customer.address.state ? ` - ${customer.address.state}` : ''}`}
-                    readOnly
-                    className="input-field bg-gray-50"
-                  />
+                  <input value={customer.address.neighborhood} onChange={(e) => setCustomer({ ...customer, address: { ...customer.address, neighborhood: e.target.value } })} className="input-field" placeholder="Bairro" />
                 </div>
               </div>
-
-              <button
-                onClick={() => {
-                  setStep(2)
-                  handleCalculateShipping()
-                }}
-                disabled={!customer.name || !customer.email || !customer.address.cep}
-                className="btn-primary mt-6"
-              >
-                Continuar para Frete
+              <button onClick={() => { setStep(2); handleCalculateShipping() }} disabled={!customer.name || !customer.address.cep} className="btn-primary mt-6">
+                Continuar
               </button>
             </div>
           )}
 
-          {/* Step 2: Shipping */}
           {step === 2 && (
-            <div className="card p-6 animate-fade-in">
-              <div className="flex items-center gap-2 mb-6">
-                <Truck className="h-5 w-5 text-brand-600" />
-                <h2 className="font-semibold text-gray-900">Frete via Correios</h2>
-              </div>
-
-              <div className="flex items-start gap-2 p-4 rounded-xl bg-gray-50 mb-6">
-                <MapPin className="h-5 w-5 text-gray-400 shrink-0 mt-0.5" />
-                <div className="text-sm">
-                  <p className="font-medium text-gray-900">{customer.name}</p>
-                  <p className="text-gray-500">
-                    {customer.address.street}, {customer.address.number}
-                    {customer.address.complement && ` - ${customer.address.complement}`}
-                  </p>
-                  <p className="text-gray-500">
-                    {customer.address.neighborhood} - {customer.address.city}/{customer.address.state} - CEP{' '}
-                    {customer.address.cep}
-                  </p>
-                </div>
-              </div>
-
+            <div className="card p-6">
+              <div className="flex items-center gap-2 mb-6"><Truck className="h-5 w-5 text-neon-cyan" /><h2 className="font-semibold text-white">Frete por vendedor</h2></div>
               {loadingShipping ? (
-                <div className="flex items-center justify-center py-12">
-                  <Loader2 className="h-8 w-8 animate-spin text-brand-600" />
-                  <span className="ml-3 text-gray-500">Calculando frete...</span>
-                </div>
-              ) : shippingOptions.length > 0 ? (
-                <div className="space-y-3">
-                  {shippingOptions.map((option) => (
-                    <label
-                      key={option.code}
-                      className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                        selectedShipping?.code === option.code
-                          ? 'border-brand-500 bg-brand-50'
-                          : 'border-gray-100 hover:border-gray-200'
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="shipping"
-                        checked={selectedShipping?.code === option.code}
-                        onChange={() => setSelectedShipping(option)}
-                        className="text-brand-600"
-                      />
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{option.service}</p>
-                        <p className="text-sm text-gray-500">{option.description}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-gray-900">{formatCurrency(option.price)}</p>
-                        <p className="text-xs text-gray-500">
-                          {option.deliveryDays} dia(s) úteis
-                        </p>
-                      </div>
-                    </label>
-                  ))}
-                </div>
+                <div className="flex justify-center py-12"><Loader2 className="h-8 w-8 animate-spin text-neon-cyan" /></div>
               ) : (
-                <div className="text-center py-8">
-                  <p className="text-gray-500">Não foi possível calcular o frete.</p>
-                  <button onClick={handleCalculateShipping} className="btn-secondary mt-4">
-                    Tentar novamente
-                  </button>
-                </div>
+                Array.from(sellerGroups.entries()).map(([sellerId, groupItems]) => {
+                  const sellerName = groupItems[0].product.sellerName || 'Vendedor'
+                  const ship = shippingBySeller[sellerId]
+                  return (
+                    <div key={sellerId} className="mb-6 border-b border-surface-600 pb-6 last:border-0">
+                      <p className="text-sm font-medium text-white flex items-center gap-2 mb-3"><Store className="h-4 w-4" /> {sellerName}</p>
+                      {ship?.options.map((opt) => (
+                        <label key={opt.code} className={`flex items-center gap-4 p-3 rounded-xl border mb-2 cursor-pointer ${ship.selected?.code === opt.code ? 'border-brand-500 bg-brand-500/10' : 'border-surface-600'}`}>
+                          <input type="radio" checked={ship.selected?.code === opt.code} onChange={() => setShippingBySeller({ ...shippingBySeller, [sellerId]: { ...ship, selected: opt } })} />
+                          <div className="flex-1"><p className="text-sm text-white">{opt.service}</p><p className="text-xs text-gray-500">{opt.deliveryDays} dias úteis</p></div>
+                          <span className="font-bold text-white">{formatCurrency(opt.price)}</span>
+                        </label>
+                      ))}
+                    </div>
+                  )
+                })
               )}
-
-              <div className="flex gap-3 mt-6">
-                <button onClick={() => setStep(1)} className="btn-secondary">
-                  Voltar
-                </button>
-                <button
-                  onClick={() => setStep(3)}
-                  disabled={!selectedShipping}
-                  className="btn-primary"
-                >
-                  Continuar para Pagamento
-                </button>
+              <div className="flex gap-3">
+                <button onClick={() => setStep(1)} className="btn-secondary">Voltar</button>
+                <button onClick={() => setStep(3)} disabled={Object.values(shippingBySeller).some((s) => !s.selected)} className="btn-primary">Pagamento</button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Payment */}
           {step === 3 && (
-            <div className="card p-6 animate-fade-in">
-              <div className="flex items-center gap-2 mb-6">
-                <CreditCard className="h-5 w-5 text-brand-600" />
-                <h2 className="font-semibold text-gray-900">Forma de Pagamento</h2>
-              </div>
-
-              <div className="space-y-3 mb-6">
-                <label
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                    paymentMethod === 'pix'
-                      ? 'border-green-500 bg-green-50'
-                      : 'border-gray-100 hover:border-gray-200'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentMethod === 'pix'}
-                    onChange={() => setPaymentMethod('pix')}
-                    className="text-green-600"
-                  />
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">PIX</p>
-                    <p className="text-sm text-green-600 font-medium">
-                      10% de desconto — Economize {formatCurrency(discount)}
-                    </p>
-                  </div>
-                  <span className="badge bg-green-100 text-green-700">Recomendado</span>
-                </label>
-
-                <label
-                  className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                    paymentMethod === 'card'
-                      ? 'border-brand-500 bg-brand-50'
-                      : 'border-gray-100 hover:border-gray-200'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="payment"
-                    checked={paymentMethod === 'card'}
-                    onChange={() => setPaymentMethod('card')}
-                    className="text-brand-600"
-                  />
-                  <div className="flex-1">
-                    <p className="font-semibold text-gray-900">Cartão de Crédito</p>
-                    <p className="text-sm text-gray-500">Em breve — use PIX por enquanto</p>
-                  </div>
-                </label>
-              </div>
-
+            <div className="card p-6">
+              <div className="flex items-center gap-2 mb-6"><CreditCard className="h-5 w-5 text-neon-cyan" /><h2 className="font-semibold text-white">Pagamento</h2></div>
+              <label className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer mb-4 ${paymentMethod === 'pix' ? 'border-green-500 bg-green-500/10' : 'border-surface-600'}`}>
+                <input type="radio" checked={paymentMethod === 'pix'} onChange={() => setPaymentMethod('pix')} />
+                <div><p className="font-semibold text-white">PIX (-{settings.pixDiscountPercent}%)</p><p className="text-sm text-green-400">Economize {formatCurrency(discount)}</p></div>
+              </label>
+              <label className="flex items-start gap-2 text-xs text-gray-400 mb-6">
+                <input type="checkbox" checked={termsAccepted} onChange={(e) => setTermsAccepted(e.target.checked)} className="mt-0.5" />
+                <span>Aceito o <Link to="/legal/contrato-comprador" className="text-neon-cyan">Contrato do Comprador</Link> e entendo que o pagamento ficará em escrow até confirmação.</span>
+              </label>
               <div className="flex gap-3">
-                <button onClick={() => setStep(2)} className="btn-secondary">
-                  Voltar
-                </button>
-                <button onClick={handleSubmitOrder} className="btn-primary flex-1">
-                  {paymentMethod === 'pix' ? 'Gerar PIX e Finalizar' : 'Finalizar Pedido'}
-                </button>
+                <button onClick={() => setStep(2)} className="btn-secondary">Voltar</button>
+                <button onClick={handleSubmitOrder} disabled={!termsAccepted} className="btn-primary flex-1">Finalizar compra</button>
               </div>
             </div>
           )}
         </div>
 
-        {/* Order summary sidebar */}
-        <div className="lg:col-span-1">
-          <div className="card p-6 sticky top-24">
-            <h2 className="font-semibold text-gray-900 mb-4">Resumo do Pedido</h2>
-
-            <div className="space-y-3 max-h-60 overflow-y-auto">
-              {items.map((item) => (
-                <div key={item.product.id} className="flex gap-3">
-                  <img
-                    src={item.product.images[0]}
-                    alt=""
-                    className="h-12 w-12 rounded-lg object-cover"
-                  />
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900 truncate">{item.product.name}</p>
-                    <p className="text-xs text-gray-500">Qtd: {item.quantity}</p>
-                  </div>
-                  <p className="text-sm font-medium">{formatCurrency(item.product.salePrice * item.quantity)}</p>
-                </div>
-              ))}
+        <div className="card p-6 h-fit sticky top-24">
+          <h2 className="font-semibold text-white mb-4">Resumo</h2>
+          {items.map((item) => (
+            <div key={item.product.id} className="flex gap-3 mb-3 text-sm">
+              <img src={item.product.images[0]} alt="" className="h-12 w-12 rounded-lg object-cover" />
+              <div className="flex-1 min-w-0">
+                <p className="text-white truncate">{item.product.name}</p>
+                <p className="text-xs text-gray-500">{item.product.sellerName}</p>
+              </div>
+              <p>{formatCurrency(item.product.salePrice * item.quantity)}</p>
             </div>
-
-            <div className="mt-4 space-y-2 text-sm border-t border-gray-100 pt-4">
-              <div className="flex justify-between">
-                <span className="text-gray-500">Subtotal</span>
-                <span>{formatCurrency(subtotal)}</span>
-              </div>
-              {paymentMethod === 'pix' && (
-                <div className="flex justify-between text-green-600">
-                  <span>Desconto PIX</span>
-                  <span>-{formatCurrency(discount)}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-gray-500">Frete</span>
-                <span>{selectedShipping ? formatCurrency(shippingCost) : '—'}</span>
-              </div>
-              <div className="flex justify-between font-bold text-lg pt-2 border-t border-gray-100">
-                <span>Total</span>
-                <span className="text-brand-600">{formatCurrency(total)}</span>
-              </div>
-            </div>
+          ))}
+          <div className="border-t border-surface-600 pt-4 mt-4 space-y-2 text-sm">
+            <div className="flex justify-between text-gray-400"><span>Subtotal</span><span>{formatCurrency(finalSubtotal)}</span></div>
+            <div className="flex justify-between text-gray-400"><span>Frete</span><span>{formatCurrency(shippingCost)}</span></div>
+            <div className="flex justify-between font-bold text-lg text-white pt-2"><span>Total</span><span className="text-neon-cyan">{formatCurrency(orderTotal)}</span></div>
           </div>
         </div>
       </div>

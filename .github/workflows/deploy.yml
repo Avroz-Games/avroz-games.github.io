@@ -38,6 +38,17 @@ jobs:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
           VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
 
+      - name: Verificar Supabase em produção
+        run: |
+          if [ -z "$VITE_SUPABASE_URL" ] || [ -z "$VITE_SUPABASE_ANON_KEY" ]; then
+            echo "::warning::Secrets VITE_SUPABASE_* não configurados. O site exibirá aviso de configuração pendente."
+          else
+            echo "Supabase configurado para build de produção."
+          fi
+        env:
+          VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+
       - name: Setup SPA fallback
         run: |
           cp dist/index.html dist/404.html
