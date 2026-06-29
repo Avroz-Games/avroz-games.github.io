@@ -1,17 +1,703 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="Avroz Games - Marketplace de jogos, consoles e acessórios com entrega via Correios e pagamento PIX." />
+    <meta
+      name="description"
+      content="Avroz Tecnologia — FinOps multi-cloud e migração de datacenters para AWS, Azure, Google Cloud e Oracle. Visibilidade, governança e transformação com segurança."
+    />
+    <title>Avroz Tecnologia | FinOps Multi-Cloud</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@600;700;800;900&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet" />
-    <title>Avroz Games | Marketplace</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo</a>
+
+    <header class="header" id="topo">
+      <nav class="nav container" aria-label="Navegação principal">
+        <a class="logo" href="#topo" aria-label="Avroz Tecnologia — início">
+          <span class="logo-mark" aria-hidden="true">A</span>
+          <span class="logo-text">
+            <strong>Avroz</strong>
+            <span>Tecnologia</span>
+          </span>
+        </a>
+        <button class="nav-toggle" aria-expanded="false" aria-controls="menu-principal">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="sr-only">Abrir menu</span>
+        </button>
+        <ul class="nav-links" id="menu-principal">
+          <li><a href="#solucoes">Soluções</a></li>
+          <li><a href="#migracao">Migração</a></li>
+          <li><a href="#clouds">Multi-Cloud</a></li>
+          <li><a href="#principios">Princípios</a></li>
+          <li><a href="#resultados">Resultados</a></li>
+          <li><a href="#contato" class="btn btn-sm btn-primary">Fale conosco</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main id="conteudo-principal">
+      <section class="hero">
+        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="container hero-grid">
+          <div class="hero-content">
+            <p class="eyebrow">FinOps Multi-Cloud · AWS · Azure · GCP · Oracle</p>
+            <h1>
+              Maximize o valor da nuvem com
+              <span class="gradient-text">decisões financeiras inteligentes</span>
+            </h1>
+            <p class="hero-lead">
+              A Avroz Tecnologia ajuda CFOs, engenheiros e líderes de produto a transformar
+              gastos em nuvem em vantagem competitiva — com visibilidade unificada, governança
+              e otimização contínua em todos os principais provedores.
+            </p>
+            <div class="hero-actions">
+              <a href="#contato" class="btn btn-primary">Agendar diagnóstico gratuito</a>
+              <a href="#solucoes" class="btn btn-secondary">Conhecer soluções</a>
+            </div>
+            <ul class="hero-trust" aria-label="Indicadores de confiança">
+              <li>
+                <strong>30–40%</strong>
+                <span>economia média identificada</span>
+              </li>
+              <li>
+                <strong>4 clouds</strong>
+                <span>visão unificada</span>
+              </li>
+              <li>
+                <strong>24/7</strong>
+                <span>monitoramento de anomalias</span>
+              </li>
+            </ul>
+          </div>
+
+          <aside class="hero-dashboard" aria-label="Prévia do painel FinOps">
+            <div class="dashboard-card">
+              <div class="dashboard-header">
+                <span class="dashboard-title">Painel FinOps — Visão Executiva</span>
+                <span class="dashboard-badge">Ao vivo</span>
+              </div>
+              <div class="dashboard-kpis">
+                <div class="kpi">
+                  <span class="kpi-label">Gasto mensal total</span>
+                  <span class="kpi-value" data-counter="847320">R$ 0</span>
+                  <span class="kpi-delta negative">↓ 12,4% vs. mês anterior</span>
+                </div>
+                <div class="kpi">
+                  <span class="kpi-label">Economia identificada</span>
+                  <span class="kpi-value accent" data-counter="128450">R$ 0</span>
+                  <span class="kpi-delta positive">Oportunidades ativas</span>
+                </div>
+              </div>
+              <div class="dashboard-chart" aria-hidden="true">
+                <div class="chart-bars">
+                  <div class="bar" style="--h: 72%"><span>AWS</span></div>
+                  <div class="bar" style="--h: 58%"><span>Azure</span></div>
+                  <div class="bar" style="--h: 45%"><span>GCP</span></div>
+                  <div class="bar" style="--h: 31%"><span>Oracle</span></div>
+                </div>
+              </div>
+              <ul class="dashboard-alerts">
+                <li class="alert alert-warn">
+                  <span>RI subutilizado — AWS us-east-1</span>
+                  <em>−R$ 4.200/mês</em>
+                </li>
+                <li class="alert alert-info">
+                  <span>Storage tiering — Azure Blob</span>
+                  <em>−R$ 2.800/mês</em>
+                </li>
+              </ul>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section class="cloud-strip" id="clouds">
+        <div class="container">
+          <p class="cloud-strip-label">
+            Expertise comprovada nos principais provedores de nuvem
+          </p>
+          <ul class="cloud-logos" aria-label="Provedores de nuvem suportados">
+            <li>
+              <img src="/assets/logos/aws.svg" alt="Amazon Web Services (AWS)" width="120" height="72" />
+              <span class="tm">AWS™</span>
+            </li>
+            <li>
+              <img src="/assets/logos/azure.svg" alt="Microsoft Azure" width="72" height="72" />
+              <span class="tm">Azure™</span>
+            </li>
+            <li>
+              <img src="/assets/logos/gcp.svg" alt="Google Cloud Platform" width="96" height="78" />
+              <span class="tm">Google Cloud™</span>
+            </li>
+            <li>
+              <img src="/assets/logos/oracle.svg" alt="Oracle Cloud Infrastructure" width="72" height="72" />
+              <span class="tm">Oracle Cloud™</span>
+            </li>
+          </ul>
+          <p class="cloud-disclaimer">
+            Amazon Web Services, AWS, Microsoft Azure, Google Cloud e Oracle Cloud são marcas
+            comerciais ou registradas de seus respectivos proprietários. A Avroz Tecnologia é
+            uma empresa independente e <strong>não possui afiliação, parceria ou endosso</strong>
+            oficial com Amazon, Microsoft, Google ou Oracle.
+          </p>
+        </div>
+      </section>
+
+      <section class="section" id="solucoes">
+        <div class="container">
+          <header class="section-header">
+            <p class="eyebrow">Nossas soluções</p>
+            <h2>FinOps, migração e transformação em nuvem</h2>
+            <p>
+              Inspirados nas melhores práticas do mercado e no FinOps Framework, entregamos
+              capacidades que conectam finanças, engenharia e liderança — da migração do
+              datacenter à otimização contínua em produção.
+            </p>
+          </header>
+          <div class="cards-grid">
+            <article class="card card-featured">
+              <div class="card-icon" aria-hidden="true">🏗️</div>
+              <h3>Migração Datacenter → Cloud</h3>
+              <p>
+                Transição segura e estruturada do ambiente on-premises para AWS, Azure,
+                Google Cloud ou Oracle — com metodologia factory, landing zone e FinOps
+                desde o primeiro dia.
+              </p>
+              <ul>
+                <li>Assessment e roadmap de workloads</li>
+                <li>Landing zone com segurança e governança</li>
+                <li>Migração em ondas com rollback planejado</li>
+              </ul>
+              <a href="#migracao" class="card-link">Ver metodologia completa →</a>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">📊</div>
+              <h3>Visibilidade &amp; Alocação</h3>
+              <p>
+                Consolide billing de múltiplos clouds com tagging padronizado, showback e
+                chargeback por centro de custo, produto ou squad.
+              </p>
+              <ul>
+                <li>Ingestão unificada de dados de custo</li>
+                <li>Alocação por tags e metadados</li>
+                <li>Relatórios para CFO e engenharia</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">⚡</div>
+              <h3>Otimização de Recursos</h3>
+              <p>
+                Identifique waste, rightsizing, commitments (RIs, Savings Plans, CUDs) e
+                oportunidades de arquitetura em cada provedor.
+              </p>
+              <ul>
+                <li>Rightsizing automatizado</li>
+                <li>Gestão de commitments por cloud</li>
+                <li>Recomendações acionáveis</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">📈</div>
+              <h3>Planejamento &amp; Forecast</h3>
+              <p>
+                Orçamentos, previsões e unit economics para decisões de investimento com
+                dados precisos e atualizados.
+              </p>
+              <ul>
+                <li>Budgeting com alertas proativos</li>
+                <li>Forecasting baseado em tendências</li>
+                <li>Unit economics por produto</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">🛡️</div>
+              <h3>Governança &amp; Políticas</h3>
+              <p>
+                Políticas de tagging, guardrails de provisionamento e auditoria contínua para
+                manter compliance e controle de custos.
+              </p>
+              <ul>
+                <li>Políticas de tagging obrigatório</li>
+                <li>Guardrails de provisionamento</li>
+                <li>Auditoria e anomaly detection</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">🤝</div>
+              <h3>Enablement &amp; Cultura</h3>
+              <p>
+                Capacite equipes com workshops, playbooks e dashboards por persona — do
+                engenheiro ao board.
+              </p>
+              <ul>
+                <li>Treinamento FinOps por persona</li>
+                <li>Playbooks de remediação</li>
+                <li>Dashboards role-based</li>
+              </ul>
+            </article>
+            <article class="card">
+              <div class="card-icon" aria-hidden="true">🔄</div>
+              <h3>Automação &amp; Integração</h3>
+              <p>
+                Automatize rotinas de FinOps com integrações nativas e APIs, reduzindo
+                trabalho manual e acelerando time-to-value.
+              </p>
+              <ul>
+                <li>Integração com ferramentas nativas</li>
+                <li>APIs e webhooks</li>
+                <li>Runbooks automatizados</li>
+              </ul>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section section-alt migration-section" id="migracao">
+        <div class="container">
+          <header class="section-header section-header-wide">
+            <p class="eyebrow">Migração Datacenter → Cloud</p>
+            <h2>Transformação para nuvem com risco controlado e valor mensurável</h2>
+            <p>
+              Migrar não é apenas mover servidores — é uma transformação de negócio que exige
+              estratégia, governança e execução em escala. Aplicamos metodologias reconhecidas
+              pelo mercado (Migration Factory, Landing Zone, 7 Rs) para levar sua operação
+              on-premises à nuvem com continuidade, segurança e economia desde o início.
+            </p>
+          </header>
+
+          <div class="migration-grid">
+            <div class="migration-intro">
+              <h3>Por que empresas confiam em uma abordagem estruturada</h3>
+              <p>
+                Projetos ad hoc — reinventando o processo a cada workload — geram atrasos,
+                estouros de orçamento e riscos de segurança. Organizações de referência adotam
+                um modelo factory: padrões definidos por tipo de aplicação, automação e equipes
+                especializadas por fase, migrando em ondas previsíveis.
+              </p>
+              <ul class="migration-benefits">
+                <li>
+                  <strong>Continuidade de negócio</strong>
+                  Cutover planejado, janelas de manutenção acordadas e plano de rollback
+                  documentado para cada workload crítico.
+                </li>
+                <li>
+                  <strong>Segurança desde o design</strong>
+                  Landing zone com identidade, rede, criptografia e compliance alinhados às
+                  políticas corporativas antes de migrar qualquer carga.
+                </li>
+                <li>
+                  <strong>FinOps embutido</strong>
+                  Gestão de custos integrada ao pipeline técnico — evitando surpresas na
+                  transição de CapEx para OpEx e garantindo ROI sustentável.
+                </li>
+                <li>
+                  <strong>Modernização onde faz sentido</strong>
+                  Nem tudo precisa ser lift-and-shift. Identificamos oportunidades de
+                  refactor, replatform e arquiteturas cloud-native para maximizar valor.
+                </li>
+              </ul>
+              <a href="#contato" class="btn btn-primary">Solicitar assessment de migração</a>
+            </div>
+
+            <ol class="migration-phases" aria-label="Fases da migração">
+              <li class="phase">
+                <span class="phase-num">01</span>
+                <div>
+                  <h4>Discovery &amp; Inventário</h4>
+                  <p>
+                    Mapeamento completo de servidores, aplicações, dependências, dados e
+                    requisitos regulatórios. Ferramentas automatizadas de discovery reduzem
+                    erro humano e aceleram o roadmap.
+                  </p>
+                </div>
+              </li>
+              <li class="phase">
+                <span class="phase-num">02</span>
+                <div>
+                  <h4>Assessment &amp; Estratégia (7 Rs)</h4>
+                  <p>
+                    Classificação de cada workload: Rehost, Replatform, Refactor, Repurchase,
+                    Retire ou Retain. TCO comparativo, priorização por valor de negócio e
+                    análise de riscos técnicos e operacionais.
+                  </p>
+                </div>
+              </li>
+              <li class="phase">
+                <span class="phase-num">03</span>
+                <div>
+                  <h4>Landing Zone &amp; Readiness</h4>
+                  <p>
+                    Ambiente multi-conta com networking, IAM, logging, backup e guardrails
+                    pré-configurados. Validação de skills das equipes e plano de upskilling
+                    antes da primeira onda.
+                  </p>
+                </div>
+              </li>
+              <li class="phase">
+                <span class="phase-num">04</span>
+                <div>
+                  <h4>Piloto &amp; Validação</h4>
+                  <p>
+                    Migração de workloads não críticos para validar padrões, automação e
+                    runbooks. Ajustes de processo antes de escalar para aplicações de missão
+                    crítica.
+                  </p>
+                </div>
+              </li>
+              <li class="phase">
+                <span class="phase-num">05</span>
+                <div>
+                  <h4>Migration Factory — Ondas</h4>
+                  <p>
+                    Execução em ondas paralelas com pipelines automatizados, testes de
+                    regressão, cutover controlado e hypercare pós-migração. Velocidade com
+                    qualidade e rastreabilidade.
+                  </p>
+                </div>
+              </li>
+              <li class="phase">
+                <span class="phase-num">06</span>
+                <div>
+                  <h4>Optimize &amp; Operate</h4>
+                  <p>
+                    Rightsizing, reservas, tagging, observabilidade e FinOps contínuo.
+                    Knowledge transfer para suas equipes assumirem operação cloud-native com
+                    autonomia.
+                  </p>
+                </div>
+              </li>
+            </ol>
+          </div>
+
+          <div class="migration-strategies">
+            <h3>Estratégias de migração por workload</h3>
+            <p class="migration-strategies-lead">
+              Cada aplicação recebe a estratégia adequada — balanceando velocidade, custo,
+              risco e valor de modernização.
+            </p>
+            <div class="strategies-grid">
+              <article class="strategy-card">
+                <h4>Rehost</h4>
+                <p class="strategy-sub">Lift-and-shift</p>
+                <p>Migração rápida com mínima alteração. Ideal para workloads estáveis que precisam sair do datacenter com urgência.</p>
+              </article>
+              <article class="strategy-card">
+                <h4>Replatform</h4>
+                <p class="strategy-sub">Lift-and-reshape</p>
+                <p>Ajustes pontuais — banco gerenciado, containers, load balancers — para ganhos de operação sem reescrever código.</p>
+              </article>
+              <article class="strategy-card">
+                <h4>Refactor</h4>
+                <p class="strategy-sub">Cloud-native</p>
+                <p>Rearquitetura para serverless, microserviços ou SaaS. Máximo valor de negócio, maior investimento inicial.</p>
+              </article>
+              <article class="strategy-card">
+                <h4>Retire &amp; Retain</h4>
+                <p class="strategy-sub">Rationalization</p>
+                <p>Descomissionamento do que não agrega valor e manutenção temporária no datacenter quando a nuvem ainda não é a melhor opção.</p>
+              </article>
+            </div>
+          </div>
+
+          <div class="migration-trust">
+            <h3>Compromissos que geram confiança</h3>
+            <div class="trust-grid">
+              <div class="trust-item">
+                <span class="trust-icon" aria-hidden="true">✓</span>
+                <div>
+                  <strong>Program assurance proativo</strong>
+                  <p>Governança de qualidade, riscos e alinhamento com metas de negócio em cada fase — não apenas no final do projeto.</p>
+                </div>
+              </div>
+              <div class="trust-item">
+                <span class="trust-icon" aria-hidden="true">✓</span>
+                <div>
+                  <strong>Transparência de TCO</strong>
+                  <p>Modelo financeiro comparativo on-premises vs. cloud, com projeções de CapEx, OpEx e payback documentados.</p>
+                </div>
+              </div>
+              <div class="trust-item">
+                <span class="trust-icon" aria-hidden="true">✓</span>
+                <div>
+                  <strong>Multi-cloud sem lock-in</strong>
+                  <p>Arquiteturas portáveis e escolha informada do provedor ideal por workload — AWS, Azure, GCP ou Oracle.</p>
+                </div>
+              </div>
+              <div class="trust-item">
+                <span class="trust-icon" aria-hidden="true">✓</span>
+                <div>
+                  <strong>Knowledge transfer</strong>
+                  <p>Treinamento hands-on, documentação e runbooks para sua equipe operar e evoluir o ambiente com autonomia.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="principios">
+        <div class="container">
+          <header class="section-header">
+            <p class="eyebrow">Nossa abordagem</p>
+            <h2>Princípios que guiam cada engajamento</h2>
+            <p>
+              FinOps não é apenas reduzir custos — é maximizar o valor de negócio da
+              tecnologia com colaboração, accountability e decisões baseadas em dados.
+            </p>
+          </header>
+          <div class="principles-grid">
+            <article class="principle">
+              <span class="principle-num">01</span>
+              <h3>Colaboração entre times</h3>
+              <p>
+                Engenharia, finanças e negócios trabalham juntos com linguagem comum e
+                metas compartilhadas.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-num">02</span>
+              <h3>Valor de negócio primeiro</h3>
+              <p>
+                Decisões técnicas são orientadas por impacto financeiro e retorno, não
+                apenas por features.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-num">03</span>
+              <h3>Ownership distribuído</h3>
+              <p>
+                Cada squad assume responsabilidade pelos custos que gera, com
+                visibilidade em tempo real.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-num">04</span>
+              <h3>Dados acessíveis e precisos</h3>
+              <p>
+                Informação de custo disponível quando e onde as decisões acontecem —
+                sem esperar o fechamento mensal.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-num">05</span>
+              <h3>Prática centralizada</h3>
+              <p>
+                Um time FinOps central acelera a maturidade e escala boas práticas pela
+                organização.
+              </p>
+            </article>
+            <article class="principle">
+              <span class="principle-num">06</span>
+              <h3>Modelo de custo variável</h3>
+              <p>
+                Aproveitamos a elasticidade da nuvem para pagar apenas pelo que agrega
+                valor real.
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="resultados">
+        <div class="container">
+          <header class="section-header">
+            <p class="eyebrow">Resultados comprovados</p>
+            <h2>Impacto mensurável em cada cloud</h2>
+          </header>
+          <div class="results-grid">
+            <div class="result-stat">
+              <span class="result-value" data-counter="38">0</span><span class="result-suffix">%</span>
+              <p>Redução média de waste identificado nos primeiros 90 dias</p>
+            </div>
+            <div class="result-stat">
+              <span class="result-value" data-counter="4">0</span>
+              <p>Provedores cloud gerenciados em visão unificada</p>
+            </div>
+            <div class="result-stat">
+              <span class="result-value" data-counter="72">0</span><span class="result-suffix">h</span>
+              <p>Para primeiro relatório executivo após onboarding</p>
+            </div>
+            <div class="result-stat">
+              <span class="result-value" data-counter="100">0</span><span class="result-suffix">%</span>
+              <p>Transparência com showback antes de chargeback</p>
+            </div>
+          </div>
+
+          <div class="personas">
+            <h3 class="personas-title">Construído para cada stakeholder</h3>
+            <div class="personas-grid">
+              <article class="persona-card">
+                <h4>CFO &amp; Finanças</h4>
+                <p>ROI, previsibilidade, compliance e justificativa de investimento em nuvem.</p>
+              </article>
+              <article class="persona-card">
+                <h4>Engenharia &amp; DevOps</h4>
+                <p>Rightsizing, tagging, guardrails e recomendações integradas ao workflow.</p>
+              </article>
+              <article class="persona-card">
+                <h4>Produto &amp; Liderança</h4>
+                <p>Unit economics, cost per feature e trade-offs de arquitetura claros.</p>
+              </article>
+              <article class="persona-card">
+                <h4>Procurement</h4>
+                <p>Negociação de commitments, contratos e otimização de rates por provedor.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section cta-section" id="contato">
+        <div class="container cta-grid">
+          <div class="cta-content">
+            <p class="eyebrow">Próximo passo</p>
+            <h2>Pronto para transformar seus custos de nuvem?</h2>
+            <p>
+              Agende um diagnóstico gratuito e descubra oportunidades de economia nos seus
+              ambientes AWS, Azure, Google Cloud e Oracle — sem compromisso.
+            </p>
+            <ul class="cta-checklist">
+              <li>Análise inicial de billing multi-cloud</li>
+              <li>Mapa de oportunidades prioritárias</li>
+              <li>Roadmap FinOps personalizado</li>
+            </ul>
+          </div>
+          <form class="contact-form" id="contact-form" novalidate>
+            <h3>Solicitar diagnóstico</h3>
+            <div class="form-group">
+              <label for="nome">Nome completo</label>
+              <input type="text" id="nome" name="nome" required autocomplete="name" />
+            </div>
+            <div class="form-group">
+              <label for="email">E-mail corporativo</label>
+              <input type="email" id="email" name="email" required autocomplete="email" />
+            </div>
+            <div class="form-group">
+              <label for="empresa">Empresa</label>
+              <input type="text" id="empresa" name="empresa" required autocomplete="organization" />
+            </div>
+            <div class="form-group">
+              <label for="clouds">Clouds em uso</label>
+              <select id="clouds" name="clouds" required>
+                <option value="">Selecione...</option>
+                <option value="aws">AWS</option>
+                <option value="azure">Azure</option>
+                <option value="gcp">Google Cloud</option>
+                <option value="oracle">Oracle Cloud</option>
+                <option value="multi">Multi-cloud (2+)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="mensagem">Conte-nos sobre seu cenário (opcional)</label>
+              <textarea id="mensagem" name="mensagem" rows="3"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full">Enviar solicitação</button>
+            <p class="form-note">
+              Ambiente de demonstração — formulário simulado para testes locais.
+            </p>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="container footer-grid">
+        <div class="footer-brand">
+          <a class="logo" href="#topo">
+            <span class="logo-mark" aria-hidden="true">A</span>
+            <span class="logo-text">
+              <strong>Avroz</strong>
+              <span>Tecnologia</span>
+            </span>
+          </a>
+          <p>
+            Consultoria especializada em FinOps multi-cloud e migração de datacenters.
+            Transformamos complexidade de infraestrutura em decisões estratégicas.
+          </p>
+          <p class="footer-domain">
+            Em breve: <strong>avroztecnologia.com</strong>
+          </p>
+        </div>
+        <div class="footer-links">
+          <h4>Soluções</h4>
+          <ul>
+            <li><a href="#migracao">Migração Datacenter → Cloud</a></li>
+            <li><a href="#solucoes">Visibilidade &amp; Alocação</a></li>
+            <li><a href="#solucoes">Otimização</a></li>
+            <li><a href="#solucoes">Planejamento</a></li>
+            <li><a href="#solucoes">Governança</a></li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Clouds</h4>
+          <ul>
+            <li>Amazon Web Services (AWS)</li>
+            <li>Microsoft Azure</li>
+            <li>Google Cloud Platform</li>
+            <li>Oracle Cloud Infrastructure</li>
+          </ul>
+        </div>
+        <div class="footer-links">
+          <h4>Contato</h4>
+          <ul>
+            <li><a href="mailto:contato@avroztecnologia.com">contato@avroztecnologia.com</a></li>
+            <li><a href="#contato">Agendar diagnóstico</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="container footer-legal">
+        <h4>Avisos legais e propriedade intelectual</h4>
+        <p>
+          © <span id="year"></span> Avroz Tecnologia. Todos os direitos reservados. O conteúdo
+          deste site é propriedade da Avroz Tecnologia e protegido por leis de direitos autorais.
+        </p>
+        <p>
+          <strong>Marcas de terceiros:</strong> Amazon Web Services, AWS, Amazon EC2, Amazon S3,
+          AWS Lambda e demais serviços AWS são marcas comerciais ou registradas da
+          <strong>Amazon.com, Inc.</strong> ou suas afiliadas. Microsoft, Azure, Microsoft Azure
+          e demais marcas Microsoft são marcas comerciais ou registradas da
+          <strong>Microsoft Corporation</strong>. Google Cloud, Google Cloud Platform, GCP e
+          demais marcas Google são marcas comerciais ou registradas da
+          <strong>Google LLC</strong>. Oracle, Oracle Cloud, Oracle Cloud Infrastructure, OCI
+          e demais marcas Oracle são marcas comerciais ou registradas da
+          <strong>Oracle Corporation</strong> e/ou suas afiliadas.
+        </p>
+        <p>
+          Os logotipos exibidos neste site são utilizados exclusivamente para fins
+          informativos, indicando os provedores de nuvem com os quais a Avroz Tecnologia
+          possui expertise técnica. <strong>A Avroz Tecnologia não é afiliada, patrocinada,
+          endossada ou certificada oficialmente</strong> por Amazon, Microsoft, Google ou Oracle,
+          salvo quando expressamente indicado em documentação contratual específica. Nenhuma
+          relação de parceria, joint venture ou agency é implícita pelo uso dessas marcas.
+        </p>
+        <p>
+          <strong>FinOps Framework:</strong> Referências ao FinOps Framework seguem os princípios
+          públicos da FinOps Foundation (finops.org). FinOps® e FinOps Foundation são marcas da
+          FinOps Foundation. A Avroz Tecnologia não é membro oficial da FinOps Foundation, salvo
+          quando indicado em contrato.
+        </p>
+        <p class="footer-disclaimer-small">
+          Este site é um ambiente de demonstração para testes locais. Informações, métricas e
+          formulários são simulados e não constituem oferta comercial vinculante.
+        </p>
+      </div>
+    </footer>
+
+    <div class="toast" id="toast" role="status" aria-live="polite" hidden>
+      Solicitação registrada com sucesso! Entraremos em contato em breve.
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
   </body>
 </html>

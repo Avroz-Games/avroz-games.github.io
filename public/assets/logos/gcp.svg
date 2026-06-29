@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 208" role="img" aria-label="Google Cloud">
+  <path fill="#EA4335" d="M67.5 64.5L22.8 142.1A88.5 88.5 0 0 0 128 196a88.5 88.5 0 0 0 105.2-53.9H128V64.5H67.5z"/>
+  <path fill="#4285F4" d="M22.8 142.1A88.5 88.5 0 0 0 128 196V64.5H67.5L22.8 142.1z"/>
+  <path fill="#34A853" d="M128 64.5V196a88.5 88.5 0 0 0 105.2-53.9L128 64.5z"/>
+  <path fill="#FBBC04" d="M233.2 142.1L188.5 64.5H128v77.6h105.2z"/>
+</svg>
