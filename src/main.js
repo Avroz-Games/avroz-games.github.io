@@ -1,4 +1,5 @@
 import "./styles.css";
+import "./fiber-canvas.js";
 
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = String(new Date().getFullYear());

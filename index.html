@@ -11,12 +11,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
+    <div class="page-ambient" aria-hidden="true">
+      <canvas id="fiber-canvas" class="fiber-canvas"></canvas>
+      <div class="page-ambient__wash"></div>
+    </div>
+
     <a class="skip-link" href="#conteudo-principal">Ir para o conteúdo</a>
 
     <header class="header" id="topo">
@@ -47,13 +52,16 @@
 
     <main id="conteudo-principal">
       <section class="hero">
-        <div class="hero-bg" aria-hidden="true"></div>
+        <div class="hero-bg" aria-hidden="true">
+          <div class="hero-bg__photo"></div>
+          <div class="hero-bg__fade"></div>
+        </div>
         <div class="container hero-grid">
           <div class="hero-content">
-            <p class="eyebrow">FinOps Multi-Cloud · AWS · Azure · GCP · Oracle</p>
+            <p class="eyebrow">FinOps Multi-Cloud</p>
             <h1>
-              Maximize o valor da nuvem com
-              <span class="gradient-text">decisões financeiras inteligentes</span>
+              Decisões de nuvem com clareza,
+              <span class="accent-text">controle e valor de negócio</span>
             </h1>
             <p class="hero-lead">
               A Avroz Tecnologia ajuda CFOs, engenheiros e líderes de produto a transformar
@@ -166,7 +174,7 @@
           </header>
           <div class="cards-grid">
             <article class="card card-featured">
-              <div class="card-icon" aria-hidden="true">🏗️</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Migração Datacenter → Cloud</h3>
               <p>
                 Transição segura e estruturada do ambiente on-premises para AWS, Azure,
@@ -181,7 +189,7 @@
               <a href="#migracao" class="card-link">Ver metodologia completa →</a>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">📊</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Visibilidade &amp; Alocação</h3>
               <p>
                 Consolide billing de múltiplos clouds com tagging padronizado, showback e
@@ -194,7 +202,7 @@
               </ul>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">⚡</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Otimização de Recursos</h3>
               <p>
                 Identifique waste, rightsizing, commitments (RIs, Savings Plans, CUDs) e
@@ -207,7 +215,7 @@
               </ul>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">📈</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Planejamento &amp; Forecast</h3>
               <p>
                 Orçamentos, previsões e unit economics para decisões de investimento com
@@ -220,7 +228,7 @@
               </ul>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">🛡️</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Governança &amp; Políticas</h3>
               <p>
                 Políticas de tagging, guardrails de provisionamento e auditoria contínua para
@@ -233,7 +241,7 @@
               </ul>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">🤝</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Enablement &amp; Cultura</h3>
               <p>
                 Capacite equipes com workshops, playbooks e dashboards por persona — do
@@ -246,7 +254,7 @@
               </ul>
             </article>
             <article class="card">
-              <div class="card-icon" aria-hidden="true">🔄</div>
+              <div class="card-icon" aria-hidden="true"></div>
               <h3>Automação &amp; Integração</h3>
               <p>
                 Automatize rotinas de FinOps com integrações nativas e APIs, reduzindo
@@ -263,6 +271,10 @@
       </section>
 
       <section class="section section-alt migration-section" id="migracao">
+        <div class="section-bg" aria-hidden="true">
+          <div class="section-bg__photo section-bg__photo--fiber"></div>
+          <div class="section-bg__fade"></div>
+        </div>
         <div class="container">
           <header class="section-header section-header-wide">
             <p class="eyebrow">Migração Datacenter → Cloud</p>
@@ -558,6 +570,10 @@
       </section>
 
       <section class="section cta-section" id="contato">
+        <div class="section-bg" aria-hidden="true">
+          <div class="section-bg__photo section-bg__photo--network"></div>
+          <div class="section-bg__fade"></div>
+        </div>
         <div class="container cta-grid">
           <div class="cta-content">
             <p class="eyebrow">Próximo passo</p>
