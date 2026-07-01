@@ -41,7 +41,7 @@ export function getLocale() {
 }
 
 export function getCurrencyConfig() {
-  return messages.currency ?? { locale: "pt-BR", code: "BRL" };
+  return messages.currency ?? { locale: "en-US", code: "USD" };
 }
 
 function detectInitialLocale() {

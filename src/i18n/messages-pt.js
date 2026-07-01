@@ -36,15 +36,17 @@ export function createMessages() {
         trust3l: "monitoramento de anomalias",
         dashboardAria: "Prévia do painel FinOps",
         dashboardTitle: "Painel FinOps — Visão Executiva",
-        dashboardLive: "Ao vivo",
+        dashboardLive: "Demonstração",
         kpi1: "Gasto mensal total",
         kpi1delta: "↓ 12,4% vs. mês anterior",
         kpi2: "Economia identificada",
         kpi2delta: "Oportunidades ativas",
         alert1: "RI subutilizado — AWS us-east-1",
-        alert1v: "−R$ 4.200/mês",
+        alert1v: "−$840/mês",
         alert2: "Storage tiering — Azure Blob",
-        alert2v: "−R$ 2.800/mês",
+        alert2v: "−$560/mês",
+        dataDisclaimer:
+          "<strong>Dados fictícios.</strong> Todos os indicadores, métricas e valores exibidos são simulados para fins ilustrativos. Para obter números reais do seu ambiente, precisamos de acesso ao billing e à infraestrutura e de uma análise com nossa ferramenta FinOps, que gera relatórios com dados reais do ambiente.",
       },
       cloud: {
         label: "Expertise comprovada nos principais provedores de nuvem",
@@ -275,10 +277,11 @@ export function createMessages() {
         legal2: '<strong>Marcas de terceiros:</strong> Amazon Web Services, AWS e demais serviços AWS são marcas da <strong>Amazon.com, Inc.</strong> Microsoft e Azure são marcas da <strong>Microsoft Corporation</strong>. Google Cloud e GCP são marcas da <strong>Google LLC</strong>. Oracle Cloud e OCI são marcas da <strong>Oracle Corporation</strong> e/ou afiliadas.',
         legal3: "Os logotipos exibidos neste site são utilizados exclusivamente para fins informativos. <strong>A Avroz Tecnologia não é afiliada, patrocinada, endossada ou certificada oficialmente</strong> por Amazon, Microsoft, Google ou Oracle.",
         legal4: "<strong>FinOps Framework:</strong> Referências seguem os princípios públicos da FinOps Foundation (finops.org). FinOps® é marca da FinOps Foundation.",
-        legal5: "Este site é um ambiente de demonstração. Informações, métricas e formulários são simulados e não constituem oferta comercial vinculante.",
+        legal5:
+          "<strong>Dados fictícios:</strong> todas as informações, métricas, indicadores e formulários deste site são simulados e não constituem oferta comercial vinculante. Para valores reais do seu ambiente, é necessário conceder acesso ao billing e à infraestrutura para que nossa ferramenta FinOps realize a análise e gere um relatório com dados reais.",
       },
       toast: "Solicitação registrada com sucesso! Entraremos em contato em breve.",
-      currency: { locale: "pt-BR", code: "BRL" },
+      currency: { locale: "en-US", code: "USD" },
     },
   };
 }

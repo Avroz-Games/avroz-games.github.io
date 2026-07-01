@@ -35,7 +35,7 @@ export function createEnMessages() {
       trust3l: "anomaly monitoring",
       dashboardAria: "FinOps dashboard preview",
       dashboardTitle: "FinOps Dashboard — Executive View",
-      dashboardLive: "Live",
+      dashboardLive: "Demo",
       kpi1: "Total monthly spend",
       kpi1delta: "↓ 12.4% vs. prior month",
       kpi2: "Identified savings",
@@ -44,6 +44,8 @@ export function createEnMessages() {
       alert1v: "−$840/mo",
       alert2: "Storage tiering — Azure Blob",
       alert2v: "−$560/mo",
+      dataDisclaimer:
+        "<strong>Fictitious data.</strong> All indicators, metrics, and values shown are simulated for illustration purposes only. To obtain real numbers from your environment, we need access to billing and infrastructure plus an analysis with our FinOps tool, which generates reports with actual environment data.",
     },
     cloud: {
       label: "Proven expertise across leading cloud providers",
@@ -274,7 +276,8 @@ export function createEnMessages() {
       legal2: '<strong>Third-party trademarks:</strong> Amazon Web Services, AWS, and other AWS services are trademarks of <strong>Amazon.com, Inc.</strong> Microsoft and Azure are trademarks of <strong>Microsoft Corporation</strong>. Google Cloud and GCP are trademarks of <strong>Google LLC</strong>. Oracle Cloud and OCI are trademarks of <strong>Oracle Corporation</strong> and/or affiliates.',
       legal3: "The logos displayed on this site are used for informational purposes only. <strong>Avroz Tecnologia is not affiliated with, sponsored by, officially endorsed by, or certified by</strong> Amazon, Microsoft, Google, or Oracle.",
       legal4: "<strong>FinOps Framework:</strong> References follow the public principles of the FinOps Foundation (finops.org). FinOps® is a trademark of the FinOps Foundation.",
-      legal5: "This site is a demo environment. Information, metrics, and forms are simulated and do not constitute a binding commercial offer.",
+      legal5:
+        "<strong>Fictitious data:</strong> all information, metrics, indicators, and forms on this site are simulated and do not constitute a binding commercial offer. Real values from your environment require granting access to billing and infrastructure so our FinOps tool can perform the analysis and generate a report with actual data.",
     },
     toast: "Request submitted successfully! We will be in touch shortly.",
     currency: { locale: "en-US", code: "USD" },

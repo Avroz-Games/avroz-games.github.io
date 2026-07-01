@@ -98,17 +98,17 @@
             <div class="dashboard-card">
               <div class="dashboard-header">
                 <span class="dashboard-title" data-i18n="hero.dashboardTitle">Painel FinOps — Visão Executiva</span>
-                <span class="dashboard-badge" data-i18n="hero.dashboardLive">Ao vivo</span>
+                <span class="dashboard-badge" data-i18n="hero.dashboardLive">Demonstração</span>
               </div>
               <div class="dashboard-kpis">
                 <div class="kpi">
                   <span class="kpi-label" data-i18n="hero.kpi1">Gasto mensal total</span>
-                  <span class="kpi-value" data-counter="847320">R$ 0</span>
+                  <span class="kpi-value" data-counter="847320">$0</span>
                   <span class="kpi-delta negative" data-i18n="hero.kpi1delta">↓ 12,4% vs. mês anterior</span>
                 </div>
                 <div class="kpi">
                   <span class="kpi-label" data-i18n="hero.kpi2">Economia identificada</span>
-                  <span class="kpi-value accent" data-counter="128450">R$ 0</span>
+                  <span class="kpi-value accent" data-counter="128450">$0</span>
                   <span class="kpi-delta positive" data-i18n="hero.kpi2delta">Oportunidades ativas</span>
                 </div>
               </div>
@@ -123,13 +123,16 @@
               <ul class="dashboard-alerts">
                 <li class="alert alert-warn">
                   <span data-i18n="hero.alert1">RI subutilizado — AWS us-east-1</span>
-                  <em data-i18n="hero.alert1v">−R$ 4.200/mês</em>
+                  <em data-i18n="hero.alert1v">−$840/mês</em>
                 </li>
                 <li class="alert alert-info">
                   <span data-i18n="hero.alert2">Storage tiering — Azure Blob</span>
-                  <em data-i18n="hero.alert2v">−R$ 2.800/mês</em>
+                  <em data-i18n="hero.alert2v">−$560/mês</em>
                 </li>
               </ul>
+              <p class="dashboard-data-disclaimer" data-i18n-html="hero.dataDisclaimer">
+                <strong>Dados fictícios.</strong> Todos os indicadores, métricas e valores exibidos são simulados para fins ilustrativos. Para obter números reais do seu ambiente, precisamos de acesso ao billing e à infraestrutura e de uma análise com nossa ferramenta FinOps, que gera relatórios com dados reais do ambiente.
+              </p>
             </div>
           </aside>
         </div>
@@ -897,8 +900,7 @@
           quando indicado em contrato.
         </p>
         <p class="footer-disclaimer-small" data-i18n-html="footer.legal5">
-          Este site é um ambiente de demonstração para testes locais. Informações, métricas e
-          formulários são simulados e não constituem oferta comercial vinculante.
+          <strong>Dados fictícios:</strong> todas as informações, métricas, indicadores e formulários deste site são simulados e não constituem oferta comercial vinculante. Para valores reais do seu ambiente, é necessário conceder acesso ao billing e à infraestrutura para que nossa ferramenta FinOps realize a análise e gere um relatório com dados reais.
         </p>
       </div>
     </footer>
