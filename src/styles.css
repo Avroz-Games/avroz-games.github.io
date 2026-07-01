@@ -266,6 +266,39 @@ ul {
   color: var(--text);
 }
 
+.lang-switcher {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem;
+  background: var(--bg-subtle);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+}
+
+.lang-btn {
+  padding: 0.35rem 0.65rem;
+  font-family: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.lang-btn:hover {
+  color: var(--text);
+}
+
+.lang-btn.is-active {
+  color: var(--text);
+  background: var(--surface);
+  box-shadow: var(--shadow-sm);
+}
+
 .nav-toggle {
   display: none;
   flex-direction: column;
@@ -1570,6 +1603,11 @@ ul {
 
   .nav-links li {
     width: 100%;
+  }
+
+  .lang-switcher {
+    justify-content: center;
+    margin: 0.5rem 0;
   }
 
   .nav-links a {

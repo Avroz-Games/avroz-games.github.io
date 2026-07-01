@@ -1,5 +1,8 @@
 import "./styles.css";
 import "./fiber-canvas.js";
+import { initI18n, getCurrencyConfig, t } from "./i18n/index.js";
+
+initI18n();
 
 const yearEl = document.getElementById("year");
 if (yearEl) yearEl.textContent = String(new Date().getFullYear());
@@ -22,15 +25,16 @@ if (navToggle && navLinks) {
 }
 
 function formatCurrency(value) {
-  return new Intl.NumberFormat("pt-BR", {
+  const { locale, code } = getCurrencyConfig();
+  return new Intl.NumberFormat(locale, {
     style: "currency",
-    currency: "BRL",
+    currency: code,
     maximumFractionDigits: 0,
   }).format(value);
 }
 
 function animateCounter(el, target, duration = 1800) {
-  const isCurrency = el.textContent.includes("R$") || el.closest(".kpi");
+  const isCurrency = el.classList.contains("kpi-value");
   const start = performance.now();
 
   function step(now) {
@@ -38,7 +42,7 @@ function animateCounter(el, target, duration = 1800) {
     const eased = 1 - Math.pow(1 - progress, 3);
     const current = Math.round(target * eased);
 
-    if (isCurrency && el.classList.contains("kpi-value")) {
+    if (isCurrency) {
       el.textContent = formatCurrency(current);
     } else {
       el.textContent = String(current);
@@ -65,8 +69,19 @@ const counterObserver = new IntersectionObserver(
   { threshold: 0.3 }
 );
 
-document.querySelectorAll("[data-counter]").forEach((el) => {
-  counterObserver.observe(el);
+function observeCounters() {
+  document.querySelectorAll("[data-counter]").forEach((el) => {
+    counterObserver.observe(el);
+  });
+}
+
+observeCounters();
+
+window.addEventListener("localechange", () => {
+  document.querySelectorAll(".kpi-value[data-counter]").forEach((el) => {
+    el.textContent = formatCurrency(0);
+  });
+  observeCounters();
 });
 
 const form = document.getElementById("contact-form");
@@ -86,7 +101,7 @@ if (form && toast) {
     [nome, email, empresa, clouds].forEach((field) => {
       if (!field || !(field instanceof HTMLInputElement || field instanceof HTMLSelectElement)) return;
       if (!field.value.trim()) {
-        field.style.borderColor = "var(--danger)";
+        field.style.borderColor = "#dc2626";
         valid = false;
       } else {
         field.style.borderColor = "";
@@ -96,6 +111,7 @@ if (form && toast) {
     if (!valid) return;
 
     form.reset();
+    toast.textContent = t("toast");
     toast.hidden = false;
     toast.classList.add("show");
 
@@ -119,9 +135,3 @@ document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     }
   });
 });
-
-console.info(
-  "%c Avroz Tecnologia — FinOps Multi-Cloud ",
-  "background:#0ea5e9;color:#fff;padding:4px 8px;border-radius:4px;font-weight:bold;"
-);
-console.info("Ambiente de demonstração local. Domínio futuro: avroztecnologia.com");
